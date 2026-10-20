@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Aurora — Login</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-1: #0f0c29;
+    --bg-2: #302b63;
+    --bg-3: #24243e;
+    --accent-1: #7f5af0;
+    --accent-2: #2cb67d;
+    --accent-3: #ff8906;
+    --text: #fffffe;
+    --text-dim: #a7a9be;
+    --glass: rgba(255, 255, 255, 0.06);
+    --glass-border: rgba(255, 255, 255, 0.12);
+    --radius: 20px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(-45deg, var(--bg-1), var(--bg-2), var(--bg-3), #1a1a2e);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+    overflow: hidden;
+    color: var(--text);
+  }
+
+  @keyframes gradientShift {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* ---------- Animated background orbs ---------- */
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(70px);
+    opacity: 0.55;
+    will-change: transform;
+  }
+  .orb-1 {
+    width: 420px; height: 420px;
+    background: radial-gradient(circle, var(--accent-1), transparent 70%);
+    top: -10%; left: -8%;
+    animation: float1 18s ease-in-out infinite;
+  }
+  .orb-2 {
+    width: 360px; height: 360px;
+    background: radial-gradient(circle, var(--accent-2), transparent 70%);
+    bottom: -12%; right: -6%;
+    animation: float2 22s ease-in-out infinite;
+  }
+  .orb-3 {
+    width: 280px; height: 280px;
+    background: radial-gradient(circle, var(--accent-3), transparent 70%);
+    top: 55%; left: 12%;
+    animation: float3 20s ease-in-out infinite;
+  }
+
+  @keyframes float1 {
+    0%,100% { transform: translate(0,0) scale(1); }
+    33%     { transform: translate(90px, 60px) scale(1.15); }
+    66%     { transform: translate(-40px, 110px) scale(0.92); }
+  }
+  @keyframes float2 {
+    0%,100% { transform: translate(0,0) scale(1); }
+    33%     { transform: translate(-80px, -70px) scale(1.1); }
+    66%     { transform: translate(50px, -30px) scale(0.9); }
+  }
+  @keyframes float3 {
+    0%,100% { transform: translate(0,0) scale(1); }
+    50%     { transform: translate(120px, -90px) scale(1.25); }
+  }
+
+  /* ---------- Particle canvas ---------- */
+  #particles {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  /* ---------- Card ---------- */
+  .card {
+    position: relative;
+    z-index: 2;
+    width: min(420px, 92vw);
+    padding: 2.6rem 2.4rem 2.2rem;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: var(--radius);
+    backdrop-filter: blur(24px) saturate(160%);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    box-shadow:
+      0 25px 60px rgba(0,0,0,0.45),
+      inset 0 1px 0 rgba(255,255,255,0.08);
+    animation: cardIn 0.9s cubic-bezier(.22,1,.36,1) both;
+    transform-style: preserve-3d;
+    transition: transform 0.25s ease;
+  }
+
+  @keyframes cardIn {
+    from { opacity: 0; transform: translateY(50px) scale(0.94); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* Shine sweep */
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius);
+    background: linear-gradient(115deg, transparent 40%, rgba(255,255,255,0.06) 50%, transparent 60%);
+    background-size: 250% 250%;
+    animation: shine 6s linear infinite;
+    pointer-events: none;
+  }
+  @keyframes shine {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -50% 0; }
+  }
+
+  /* ---------- Header ---------- */
+  .logo {
+    width: 62px; height: 62px;
+    margin: 0 auto 1rem;
+    border-radius: 18px;
+    background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+    display: grid;
+    place-items: center;
+    font-size: 1.7rem;
+    animation: logoPulse 3s ease-in-out infinite;
+    box-shadow: 0 8px 30px rgba(127, 90, 240, 0.45);
+  }
+  @keyframes logoPulse {
+    0%,100% { transform: scale(1) rotate(0deg); box-shadow: 0 8px 30px rgba(127,90,240,0.45); }
+    50%     { transform: scale(1.06) rotate(4deg); box-shadow: 0 12px 44px rgba(44,182,125,0.55); }
+  }
+
+  h1 {
+    text-align: center;
+    font-size: 1.55rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+  }
+  .subtitle {
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 0.85rem;
+    margin: 0.3rem 0 1.6rem;
+  }
+
+  /* ---------- Tabs ---------- */
+  .tabs {
+    display: flex;
+    background: rgba(255,255,255,0.05);
+    border-radius: 12px;
+    padding: 5px;
+    margin-bottom: 1.6rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .tab {
+    flex: 1;
+    z-index: 1;
+    padding: 0.6rem;
+    text-align: center;
+    font-size: 0.86rem;
+    font-weight: 500;
+    color: var(--text-dim);
+    background: none;
+    border: none;
+    cursor: pointer;
+    border-radius: 9px;
+    transition: color 0.3s ease;
+    font-family: inherit;
+  }
+  .tab.active { color: #fff; }
+  .tab-indicator {
+    position: absolute;
+    top: 5px; bottom: 5px;
+    width: calc(50% - 5px);
+    background: linear-gradient(135deg, var(--accent-1), rgba(127,90,240,0.6));
+    border-radius: 9px;
+    transition: transform 0.4s cubic-bezier(.22,1,.36,1);
+    box-shadow: 0 4px 18px rgba(127,90,240,0.4);
+  }
+  .tabs[data-active="register"] .tab-indicator { transform: translateX(100%); }
+
+  /* ---------- Forms ---------- */
+  .form-container { position: relative; }
+  .form {
+    display: none;
+    flex-direction: column;
+    gap: 1.05rem;
+  }
+  .form.active {
+    display: flex;
+    animation: formIn 0.45s cubic-bezier(.22,1,.36,1) both;
+  }
+  @keyframes formIn {
+    from { opacity: 0; transform: translateX(24px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  .field { position: relative; }
+  .field input {
+    width: 100%;
+    padding: 1rem 1.1rem 0.55rem;
+    background: rgba(255,255,255,0.05);
+    border: 1.5px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    color: var(--text);
+    font-size: 0.95rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s, background 0.3s;
+  }
+  .field input:focus {
+    border-color: var(--accent-1);
+    background: rgba(127,90,240,0.08);
+    box-shadow: 0 0 0 4px rgba(127,90,240,0.18);
+  }
+  .field label {
+    position: absolute;
+    left: 1.1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-dim);
+    font-size: 0.92rem;
+    pointer-events: none;
+    transition: all 0.25s cubic-bezier(.22,1,.36,1);
+  }
+  .field input:focus + label,
+  .field input:not(:placeholder-shown) + label {
+    top: 0.55rem;
+    transform: translateY(0);
+    font-size: 0.66rem;
+    color: var(--accent-1);
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  /* Password toggle */
+  .toggle-pass {
+    position: absolute;
+    right: 0.9rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-dim);
+    padding: 4px;
+    display: grid;
+    place-items: center;
+    transition: color 0.25s, transform 0.25s;
+  }
+  .toggle-pass:hover { color: var(--text); transform: translateY(-50%) scale(1.12); }
+
+  .row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.8rem;
+  }
+  .remember {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: var(--text-dim);
+    cursor: pointer;
+    user-select: none;
+  }
+  .remember input { display: none; }
+  .checkmark {
+    width: 18px; height: 18px;
+    border: 1.5px solid rgba(255,255,255,0.25);
+    border-radius: 5px;
+    display: grid;
+    place-items: center;
+    transition: all 0.25s;
+  }
+  .checkmark svg {
+    width: 11px; height: 11px;
+    stroke: #fff;
+    stroke-width: 3;
+    fill: none;
+    stroke-dasharray: 20;
+    stroke-dashoffset: 20;
+    transition: stroke-dashoffset 0.3s ease 0.05s;
+  }
+  .remember input:checked + .checkmark {
+    background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+    border-color: transparent;
+    animation: pop 0.3s ease;
+  }
+  .remember input:checked + .checkmark svg { stroke-dashoffset: 0; }
+  @keyframes pop { 50% { transform: scale(1.2); } }
+
+  .forgot {
+    color: var(--accent-2);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.25s;
+  }
+  .forgot:hover { color: var(--accent-3); }
+
+  /* ---------- Button ---------- */
+  .btn {
+    position: relative;
+    padding: 0.95rem;
+    border: none;
+    border-radius: 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    font-family: inherit;
+    color: #fff;
+    cursor: pointer;
+    overflow: hidden;
+    background: linear-gradient(135deg, var(--accent-1), #9b51e0, var(--accent-2));
+    background-size: 200% 200%;
+    animation: btnGradient 4s ease infinite;
+    transition: transform 0.2s, box-shadow 0.3s;
+    box-shadow: 0 8px 26px rgba(127, 90, 240, 0.4);
+  }
+  @keyframes btnGradient {
+    0%,100% { background-position: 0% 50%; }
+    50%     { background-position: 100% 50%; }
+  }
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 36px rgba(127, 90, 240, 0.55);
+  }
+  .btn:active { transform: translateY(0) scale(0.98); }
+  .btn .ripple {
+    position: absolute;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.4);
+    transform: scale(0);
+    animation: ripple 0.6s linear;
+    pointer-events: none;
+  }
+  @keyframes ripple {
+    to { transform: scale(4); opacity: 0; }
+  }
+  .btn .spinner {
+    display: none;
+    width: 20px; height: 20px;
+    border: 2.5px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    margin: 0 auto;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .btn.loading .btn-text { display: none; }
+  .btn.loading .spinner { display: block; }
+
+  /* ---------- Social ---------- */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin: 1.5rem 0 1.1rem;
+    color: var(--text-dim);
+    font-size: 0.75rem;
+  }
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.18), transparent);
+  }
+
+  .socials {
+    display: flex;
+    gap: 0.7rem;
+  }
+  .social {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.7rem;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 11px;
+    cursor: pointer;
+    color: var(--text);
+    font-size: 0.8rem;
+    font-weight: 500;
+    font-family: inherit;
+    transition: all 0.3s cubic-bezier(.22,1,.36,1);
+  }
+  .social:hover {
+    background: rgba(255,255,255,0.12);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  }
+  .social svg { width: 18px; height: 18px; }
+  .social:nth-child(1):hover { border-color: #ea4335; color: #ea4335; }
+  .social:nth-child(2):hover { border-color: #1da1f2; color: #1da1f2; }
+  .social:nth-child(3):hover { border-color: #333; color: #fff; background: #333; }
+
+  /* ---------- Toast ---------- */
+  .toast {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%) translateY(120px);
+    padding: 0.85rem 1.5rem;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 14px;
+    color: #fff;
+    font-size: 0.88rem;
+    font-weight: 500;
+    z-index: 100;
+    transition: transform 0.5s cubic-bezier(.22,1,.36,1), opacity 0.5s;
+    opacity: 0;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.4);
+  }
+  .toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+  .toast.success { border-color: rgba(44,182,125,0.5); }
+  .toast.error   { border-color: rgba(255,89,89,0.5); }
+
+  /* ---------- Floating shapes ---------- */
+  .shape {
+    position: fixed;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.12;
+  }
+  .shape svg { display: block; }
+  .shape-1 { top: 12%; right: 14%; animation: spinSlow 40s linear infinite; }
+  .shape-2 { bottom: 16%; left: 10%; animation: spinSlow 30s linear infinite reverse; }
+  .shape-3 { top: 20%; left: 22%; animation: bob 6s ease-in-out infinite; }
+  @keyframes spinSlow { to { transform: rotate(360deg); } }
+  @keyframes bob {
+    0%,100% { transform: translateY(0) rotate(0); }
+    50%     { transform: translateY(-25px) rotate(15deg); }
+  }
+
+  /* ---------- Success overlay ---------- */
+  .success-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 12, 41, 0.92);
+    backdrop-filter: blur(10px);
+    border-radius: var(--radius);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s ease;
+    z-index: 5;
+  }
+  .success-overlay.show { opacity: 1; pointer-events: all; }
+  .success-ring {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-2), #20e3b2);
+    display: grid;
+    place-items: center;
+    animation: popIn 0.6s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  .success-ring svg {
+    width: 36px; height: 36px;
+    stroke: #fff; stroke-width: 3; fill: none;
+    stroke-linecap: round; stroke-linejoin: round;
+    stroke-dasharray: 30; stroke-dashoffset: 30;
+  }
+  .success-overlay.show .success-ring svg {
+    animation: drawCheck 0.5s ease 0.3s forwards;
+  }
+  @keyframes drawCheck { to { stroke-dashoffset: 0; } }
+  @keyframes popIn {
+    from { transform: scale(0); }
+    to   { transform: scale(1); }
+  }
+  .success-overlay p { font-weight: 500; font-size: 1.05rem; }
+  .success-overlay span { color: var(--text-dim); font-size: 0.82rem; }
+
+  @media (max-width: 420px) {
+    .card { padding: 2rem 1.4rem 1.6rem; }
+    .social span { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="particles"></canvas>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<div class="shape shape-1">
+  <svg width="70" height="70" viewBox="0 0 70 70" fill="none">
+    <polygon points="35,4 66,52 4,52" stroke="#7f5af0" stroke-width="2" fill="none"/>
+  </svg>
+</div>
+<div class="shape shape-2">
+  <svg width="55" height="55" viewBox="0 0 55 55" fill="none">
+    <rect x="6" y="6" width="43" height="43" rx="8" stroke="#2cb67d" stroke-width="2" fill="none"/>
+  </svg>
+</div>
+<div class="shape shape-3">
+  <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+    <circle cx="20" cy="20" r="16" stroke="#ff8906" stroke-width="2" fill="none"/>
+  </svg>
+</div>
+
+<div class="card" id="card">
+  <div class="success-overlay" id="successOverlay">
+    <div class="success-ring">
+      <svg viewBox="0 0 24 24"><polyline points="5 13 10 18 19 7"/></svg>
+    </div>
+    <p id="successTitle">Welcome back!</p>
+    <span>You've been signed in successfully.</span>
+  </div>
+
+  <div class="logo">✦</div>
+  <h1 id="cardTitle">Welcome Back</h1>
+  <p class="subtitle" id="cardSubtitle">Sign in to continue your journey</p>
+
+  <div class="tabs" id="tabs" data-active="login">
+    <div class="tab-indicator"></div>
+    <button class="tab active" data-tab="login">Sign In</button>
+    <button class="tab" data-tab="register">Sign Up</button>
+  </div>
+
+  <div class="form-container">
+    <!-- LOGIN -->
+    <form class="form active" id="loginForm" novalidate>
+      <div class="field">
+        <input type="email" id="loginEmail" placeholder=" " required autocomplete="email">
+        <label for="loginEmail">Email address</label>
+      </div>
+      <div class="field">
+        <input type="password" id="loginPass" placeholder=" " required autocomplete="current-password">
+        <label for="loginPass">Password</label>
+        <button type="button" class="toggle-pass" data-target="loginPass" aria-label="Toggle password visibility">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+          </svg>
+        </button>
+      </div>
+      <div class="row">
+        <label class="remember">
+          <input type="checkbox" checked>
+          <span class="checkmark"><svg viewBox="0 0 24 24"><polyline points="5 13 10 18 19 7"/></svg></span>
+          Remember me
+        </label>
+        <a href="#" class="forgot">Forgot password?</a>
+      </div>
+      <button type="submit" class="btn">
+        <span class="btn-text">Sign In</span>
+        <div class="spinner"></div>
+      </button>
+    </form>
+
+    <!-- REGISTER -->
+    <form class="form" id="registerForm" novalidate>
+      <div class="field">
+        <input type="text" id="regName" placeholder=" " required autocomplete="name">
+        <label for="regName">Full name</label>
+      </div>
+      <div class="field">
+        <input type="email" id="regEmail" placeholder=" " required autocomplete="email">
+        <label for="regEmail">Email address</label>
+      </div>
+      <div class="field">
+        <input type="password" id="regPass" placeholder=" " required autocomplete="new-password" minlength="6">
+        <label for="regPass">Password</label>
+        <button type="button" class="toggle-pass" data-target="regPass" aria-label="Toggle password visibility">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+          </svg>
+        </button>
+      </div>
+      <button type="submit" class="btn">
+        <span class="btn-text">Create Account</span>
+        <div class="spinner"></div>
+      </button>
+    </form>
+  </div>
+
+  <div class="divider">or continue with</div>
+  <div class="socials">
+    <button class="social" type="button">
+      <svg viewBox="0 0 24 24"><path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      Google
+    </button>
+    <button class="social" type="button">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"/></svg>
+      Twitter
+    </button>
+    <button class="social" type="button">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 .3a12 12 0 0 0-3.8 23.4c.6.1.8-.3.8-.6v-2c-3.3.7-4-1.6-4-1.6-.5-1.4-1.3-1.8-1.3-1.8-1-.7.1-.7.1-.7 1.2 0 1.9 1.2 1.9 1.2 1 1.8 2.8 1.3 3.5 1 0-.8.4-1.3.7-1.6-2.7-.3-5.5-1.3-5.5-6 0-1.2.5-2.3 1.3-3.1-.2-.4-.6-1.6 0-3.2 0 0 1-.3 3.4 1.2a11.5 11.5 0 0 1 6 0c2.3-1.5 3.3-1.2 3.3-1.2.6 1.6.2 2.8.1 3.2.8.8 1.3 1.9 1.3 3.2 0 4.6-2.8 5.6-5.5 5.9.5.4.9 1 .9 2.2v3.3c0 .3.1.7.8.6A12 12 0 0 0 12 .3"/></svg>
+      GitHub
+    </button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ==================== PARTICLES ==================== */
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let W, H, particles = [];
+
+function resize() {
+  W = canvas.width = innerWidth;
+  H = canvas.height = innerHeight;
+}
+resize();
+addEventListener('resize', resize);
+
+class Particle {
+  constructor() { this.reset(); }
+  reset() {
+    this.x = Math.random() * W;
+    this.y = Math.random() * H;
+    this.size = Math.random() * 2 + 0.5;
+    this.speedX = (Math.random() - 0.5) * 0.4;
+    this.speedY = (Math.random() - 0.5) * 0.4;
+    this.opacity = Math.random() * 0.5 + 0.1;
+    this.hue = Math.random() > 0.5 ? 258 : 160;
+  }
+  update() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+    if (this.x < 0 || this.x > W || this.y < 0 || this.y > H) this.reset();
+  }
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fillStyle = `hsla(${this.hue}, 80%, 70%, ${this.opacity})`;
+    ctx.fill();
+  }
+}
+
+for (let i = 0; i < 90; i++) particles.push(new Particle());
+
+function connectParticles() {
+  for (let a = 0; a < particles.length; a++) {
+    for (let b = a + 1; b < particles.length; b++) {
+      const dx = particles[a].x - particles[b].x;
+      const dy = particles[a].y - particles[b].y;
+      const dist = Math.hypot(dx, dy);
+      if (dist < 110) {
+        ctx.beginPath();
+        ctx.moveTo(particles[a].x, particles[a].y);
+        ctx.lineTo(particles[b].x, particles[b].y);
+        ctx.strokeStyle = `rgba(127, 90, 240, ${0.08 * (1 - dist / 110)})`;
+        ctx.lineWidth = 0.6;
+        ctx.stroke();
+      }
+    }
+  }
+}
+
+function animateParticles() {
+  ctx.clearRect(0, 0, W, H);
+  particles.forEach(p => { p.update(); p.draw(); });
+  connectParticles();
+  requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+/* ==================== CARD 3D TILT ==================== */
+const card = document.getElementById('card');
+document.addEventListener('mousemove', e => {
+  const r = card.getBoundingClientRect();
+  const cx = r.left + r.width / 2;
+  const cy = r.top + r.height / 2;
+  const rotateX = ((e.clientY - cy) / r.height) * -8;
+  const rotateY = ((e.clientX - cx) / r.width) * 8;
+  card.style.transform = `perspective(900px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+});
+document.addEventListener('mouseleave', () => { card.style.transform = ''; });
+
+/* ==================== TABS ==================== */
+const tabs = document.querySelectorAll('.tab');
+const tabWrap = document.getElementById('tabs');
+const loginForm = document.getElementById('loginForm');
+const registerForm = document.getElementById('registerForm');
+const cardTitle = document.getElementById('cardTitle');
+const cardSubtitle = document.getElementById('cardSubtitle');
+
+tabs.forEach(tab => {
+  tab.addEventListener('click', () => {
+    const target = tab.dataset.tab;
+    tabWrap.dataset.active = target;
+    tabs.forEach(t => t.classList.toggle('active', t === tab));
+
+    const isLogin = target === 'login';
+    loginForm.classList.toggle('active', isLogin);
+    registerForm.classList.toggle('active', !isLogin);
+    cardTitle.textContent = isLogin ? 'Welcome Back' : 'Create Account';
+    cardSubtitle.textContent = isLogin ? 'Sign in to continue your journey' : 'Join us — it only takes a moment';
+  });
+});
+
+/* ==================== PASSWORD TOGGLE ==================== */
+document.querySelectorAll('.toggle-pass').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const input = document.getElementById(btn.dataset.target);
+    const show = input.type === 'password';
+    input.type = show ? 'text' : 'password';
+    btn.innerHTML = show
+      ? `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`
+      : `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
+  });
+});
+
+/* ==================== RIPPLE ==================== */
+document.querySelectorAll('.btn').forEach(btn => {
+  btn.addEventListener('click', e => {
+    const ripple = document.createElement('span');
+    ripple.classList.add('ripple');
+    const rect = btn.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    ripple.style.width = ripple.style.height = size + 'px';
+    ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+    ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+    btn.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 600);
+  });
+});
+
+/* ==================== TOAST ==================== */
+const toast = document.getElementById('toast');
+let toastTimer;
+function showToast(message, type = 'success') {
+  clearTimeout(toastTimer);
+  toast.textContent = message;
+  toast.className = `toast ${type} show`;
+  toastTimer = setTimeout(() => toast.classList.remove('show'), 3200);
+}
+
+/* ==================== SUCCESS OVERLAY ==================== */
+const successOverlay = document.getElementById('successOverlay');
+const successTitle = document.getElementById('successTitle');
+
+/* ==================== FORM SUBMISSIONS ==================== */
+function fakeSubmit(form, btn, onDone) {
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+
+    // Simple validation
+    const inputs = form.querySelectorAll('input[required]');
+    let valid = true;
+    inputs.forEach(inp => {
+      if (!inp.value.trim() || !inp.checkValidity()) {
+        valid = false;
+        inp.style.borderColor = '#ff5959';
+        inp.animate(
+          [{ transform: 'translateX(0)' }, { transform: 'translateX(-8px)' }, { transform: 'translateX(8px)' }, { transform: 'translateX(0)' }],
+          { duration: 350, easing: 'ease-in-out' }
+        );
+        inp.addEventListener('input', () => { inp.style.borderColor = ''; }, { once: true });
+      }
+    });
+    if (!valid) return;
+
+    btn.classList.add('loading');
+    setTimeout(() => {
+      btn.classList.remove('loading');
+      onDone();
+    }, 1600);
+  });
+}
+
+fakeSubmit(loginForm, loginForm.querySelector('.btn'), () => {
+  successTitle.textContent = 'Welcome back!';
+  successOverlay.classList.add('show');
+  showToast('Signed in successfully ✨');
+  setTimeout(() => successOverlay.classList.remove('show'), 3000);
+});
+
+fakeSubmit(registerForm, registerForm.querySelector('.btn'), () => {
+  successTitle.textContent = 'Account created!';
+  successOverlay.classList.add('show');
+  showToast('Welcome aboard 🎉');
+  setTimeout(() => successOverlay.classList.remove('show'), 3000);
+});
+
+/* ==================== SOCIAL BUTTONS ==================== */
+document.querySelectorAll('.social').forEach(btn => {
+  btn.addEventListener('click', () => {
+    showToast(`Redirecting to ${btn.textContent.trim()}…`, 'success');
+  });
+});
+</script>
+</body>
+</html>
